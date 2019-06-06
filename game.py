@@ -2,6 +2,7 @@ import pygame, sys
 from pygame.locals import *
 from random import randint
 from strassen import strassen
+from constants import *
 
 pygame.init()
 
@@ -9,20 +10,15 @@ black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)
 
-screen_height = 689
-screen_width = 1277
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode((screen_width, screen_height))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 pygame.mouse.set_visible(0)
-BLOCK_SIZE = 25
-MATRIX_SIZE = 12
-MATRIX_SPACE = 30
-MATRIX_FONT_SIZE = 12
-COUNTER_FONT_SIZE = 30
+
 background = pygame.image.load('images/space.jpg')
 key_up_image = pygame.image.load('images/key_up2.png')
 key_down_image = pygame.image.load('images/key_down2.png')
+
 
 def create_text_object(size, content):
     text = pygame.font.Font('freesansbold.ttf', size)
@@ -30,34 +26,39 @@ def create_text_object(size, content):
     return text_surface, text_surface.get_rect()
 
 
-def draw_matrix_number(number, pos_x, pos_y):
+def draw_character(size, content, pos_x, pos_y):
     text_surface, text_surface_rect = create_text_object(
-        MATRIX_FONT_SIZE,
-        str(number)
+        size,
+        content
     )
-    text_surface_rect.center = (pos_x+BLOCK_SIZE/2, pos_y+BLOCK_SIZE/2)
+    text_surface_rect.center = (pos_x, pos_y)
     screen.blit(text_surface, text_surface_rect)
 
 
 def draw_matrix_grid(size, matrix_id, matrix=None):
     if matrix_id == 'A':
-        initial_pos_x = (screen_width/2)-((BLOCK_SIZE+1)*size)-MATRIX_SPACE
-        initial_pos_y = (screen_height/2)-(BLOCK_SIZE*size)-MATRIX_SPACE
+        initial_pos_x = (SCREEN_WIDTH/2)-((BLOCK_SIZE+1)*size)-MATRIX_SPACE
+        initial_pos_y = (SCREEN_HEIGHT/2)-(BLOCK_SIZE*size)-MATRIX_SPACE
     elif matrix_id == 'B':
-        initial_pos_x = (screen_width/2)+MATRIX_SPACE  
-        initial_pos_y = (screen_height/2)-(BLOCK_SIZE*size)-MATRIX_SPACE
+        initial_pos_x = (SCREEN_WIDTH/2)+MATRIX_SPACE  
+        initial_pos_y = (SCREEN_HEIGHT/2)-(BLOCK_SIZE*size)-MATRIX_SPACE
     elif matrix_id == 'C':
-        initial_pos_x = (screen_width/2)-((BLOCK_SIZE+1)*size/2)  
-        initial_pos_y = (screen_height/2)+MATRIX_SPACE
+        initial_pos_x = (SCREEN_WIDTH/2)-((BLOCK_SIZE+1)*size/2)  
+        initial_pos_y = (SCREEN_HEIGHT/2)+MATRIX_SPACE
 
     for y in range(size):
         for x in range(size):
             pos_x = x * (BLOCK_SIZE+1) + initial_pos_x
             pos_y = y * (BLOCK_SIZE+1) + initial_pos_y
             rect = pygame.Rect(pos_x, pos_y , BLOCK_SIZE, BLOCK_SIZE)
-            pygame.draw.rect(screen, (255, 0, 0), rect)
+            pygame.draw.rect(screen, red, rect)
             if matrix is not None:
-                draw_matrix_number(matrix[y][x], pos_x, pos_y)
+                draw_character(
+                    MATRIX_FONT_SIZE,
+                    str(matrix[y][x]),
+                    pos_x+BLOCK_SIZE/2,
+                    pos_y+BLOCK_SIZE/2
+                )
 
 
 def generate_random_matrix(size):
@@ -74,7 +75,7 @@ class Game:
         self.matrix_c = None
         self.key_up_size = key_up_image.get_width()
         self.key_up_x = 30
-        self.key_up_y = (screen_height/2) - self.key_up_size - self.size_number_size/2 + MATRIX_SPACE/2
+        self.key_up_y = (SCREEN_HEIGHT/2) - self.key_up_size - self.size_number_size/2 + MATRIX_SPACE/2
         self.key_down_size = key_down_image.get_width()
         self.key_down_x = self.key_up_x
         self.key_down_y = self.key_up_y + self.key_up_size + self.size_number_size
@@ -89,7 +90,7 @@ class Game:
             draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C', self.matrix_c)
             self.draw_size_number()
-            self.draw_plus_sign()
+            self.draw_x_sign()
             self.draw_equals_sign()
 
             for event in pygame.event.get():
@@ -132,18 +133,18 @@ class Game:
         self.matrix_b = generate_random_matrix(self.size)
         self.matrix_c = strassen(self.matrix_a, self.matrix_b)
 
-    def draw_plus_sign(self):
+    def draw_x_sign(self):
         if self.size >= 5:
             size = 50
         else:
             size = 30
-        
-        text_surface, text_surface_rect = create_text_object(size, 'X')
-        text_surface_rect.center = (
-            screen_width/2,
-            (screen_height/2) - (BLOCK_SIZE*self.size/2) - 30
+
+        draw_character(
+            size,
+            'X',
+            SCREEN_WIDTH/2,
+            (SCREEN_HEIGHT/2) - (BLOCK_SIZE*self.size/2) - MATRIX_SPACE
         )
-        screen.blit(text_surface, text_surface_rect)
 
     def draw_equals_sign(self):
         if self.size >= 5:
@@ -151,12 +152,12 @@ class Game:
         else:
             size = 50
 
-        text_surface, text_surface_rect = create_text_object(size, '=')
-        text_surface_rect.center = (
-            screen_width/2,
-            screen_height/2
+        draw_character(
+            size,
+            '=',
+            SCREEN_WIDTH/2,
+            SCREEN_HEIGHT/2
         )
-        screen.blit(text_surface, text_surface_rect)
             
 
 if __name__ == '__main__':
