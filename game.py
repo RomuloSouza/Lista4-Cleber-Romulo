@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.mouse.set_visible(0)
 BLOCK_SIZE = 25
-MATRIX_SIZE = 3
+MATRIX_SIZE = 12
 MATRIX_SPACE = 30
 MATRIX_FONT_SIZE = 12
 COUNTER_FONT_SIZE = 30
@@ -24,11 +24,17 @@ background = pygame.image.load('images/space.jpg')
 key_up_image = pygame.image.load('images/key_up2.png')
 key_down_image = pygame.image.load('images/key_down2.png')
 
+def create_text_object(size, content):
+    text = pygame.font.Font('freesansbold.ttf', size)
+    text_surface = text.render(content, True, white)
+    return text_surface, text_surface.get_rect()
+
 
 def draw_matrix_number(number, pos_x, pos_y):
-    text = pygame.font.Font('freesansbold.ttf', MATRIX_FONT_SIZE)
-    text_surface = text.render(str(number), True, white)
-    text_surface_rect = text_surface.get_rect()
+    text_surface, text_surface_rect = create_text_object(
+        MATRIX_FONT_SIZE,
+        str(number)
+    )
     text_surface_rect.center = (pos_x+BLOCK_SIZE/2, pos_y+BLOCK_SIZE/2)
     screen.blit(text_surface, text_surface_rect)
 
@@ -83,11 +89,11 @@ class Game:
             draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C', self.matrix_c)
             self.draw_size_number()
+            self.draw_plus_sign()
+            self.draw_equals_sign()
 
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                elif event.type == KEYDOWN and event.key == 32: # espace
+                if event.type == KEYDOWN and event.key == 32: # espace
                     print('keydown')
                 elif event.type == KEYDOWN and event.key == 115: # key s
                     print('keydown')
@@ -111,9 +117,10 @@ class Game:
             sys.exit()
     
     def draw_size_number(self):
-        text = pygame.font.Font('freesansbold.ttf', COUNTER_FONT_SIZE)
-        text_surface = text.render(str(self.size), True, white)
-        text_surface_rect = text_surface.get_rect()
+        text_surface, text_surface_rect = create_text_object(
+            COUNTER_FONT_SIZE,
+            str(self.size)
+        )
         text_surface_rect.center = (
             self.key_up_x + self.key_up_size/2,
             self.key_up_y + self.key_up_size + self.size_number_size/2
@@ -124,6 +131,32 @@ class Game:
         self.matrix_a = generate_random_matrix(self.size)
         self.matrix_b = generate_random_matrix(self.size)
         self.matrix_c = strassen(self.matrix_a, self.matrix_b)
+
+    def draw_plus_sign(self):
+        if self.size >= 5:
+            size = 50
+        else:
+            size = 30
+        
+        text_surface, text_surface_rect = create_text_object(size, 'X')
+        text_surface_rect.center = (
+            screen_width/2,
+            (screen_height/2) - (BLOCK_SIZE*self.size/2) - 30
+        )
+        screen.blit(text_surface, text_surface_rect)
+
+    def draw_equals_sign(self):
+        if self.size >= 5:
+            size = 70
+        else:
+            size = 50
+
+        text_surface, text_surface_rect = create_text_object(size, '=')
+        text_surface_rect.center = (
+            screen_width/2,
+            screen_height/2
+        )
+        screen.blit(text_surface, text_surface_rect)
             
 
 if __name__ == '__main__':
