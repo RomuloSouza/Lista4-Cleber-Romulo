@@ -3,8 +3,7 @@ from pygame.locals import *
 from collections import deque
 from collections import defaultdict
 from os.path import abspath, dirname
-from random import choice, randint
-import heapq
+from random import randint
 
 
 
@@ -59,19 +58,26 @@ def draw_matrix_grid(size, matrix_id, matrix=None):
             if matrix is not None:
                 draw_matrix_number(matrix[x][y], pos_x, pos_y)
 
+def generate_random_matrix(size):
+    matrix = [[randint(0, 99) for x in range(size)] for y in range(size)]
+    return matrix
 
 class Game:
     def __init__(self):
         self.size = 10
-        pass
+        self.matrix_a = None
+        self.matrix_b = None
+        self.matrix_c = None
 
     def run(self):
-        matrix = [[1 for x in range(self.size)] for y in range(self.size)]
+        self.matrix_a = generate_random_matrix(self.size)
+        self.matrix_b = generate_random_matrix(self.size)
+        # matrix = [[1 for x in range(self.size)] for y in range(self.size)]
         while True:
             screen.blit(background, [0, 0])
             # pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(500, 0, 40, 30))
-            draw_matrix_grid(self.size, 'A', matrix)
-            draw_matrix_grid(self.size, 'B', matrix)
+            draw_matrix_grid(self.size, 'A', self.matrix_a)
+            draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C')
             # draw_matrix_b(size)
 
