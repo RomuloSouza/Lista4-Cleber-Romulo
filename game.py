@@ -4,7 +4,7 @@ from collections import deque
 from collections import defaultdict
 from os.path import abspath, dirname
 from random import randint
-
+from strassen import strassen
 
 
 pygame.init()
@@ -24,11 +24,9 @@ BLOCK_SIZE = 30
 MATRIX_SPACE = 30
 background = pygame.image.load('images/space.jpg')
 
-def text_objects(text, font):
-    textSurface = font.render(text, True, white)
-    width = textSurface.get_width()
-    height = textSurface.get_height()
-    return textSurface, textSurface.get_rect(), width, height
+def printMatrix(matrix):
+    for line in matrix:
+        print ("\t".join(map(str,line)))
 
 def draw_matrix_number(number, pos_x, pos_y):
     text = pygame.font.Font('freesansbold.ttf', 13)
@@ -59,7 +57,7 @@ def draw_matrix_grid(size, matrix_id, matrix=None):
                 draw_matrix_number(matrix[x][y], pos_x, pos_y)
 
 def generate_random_matrix(size):
-    matrix = [[randint(0, 99) for x in range(size)] for y in range(size)]
+    matrix = [[randint(0, 10) for x in range(size)] for y in range(size)]
     return matrix
 
 class Game:
@@ -72,13 +70,14 @@ class Game:
     def run(self):
         self.matrix_a = generate_random_matrix(self.size)
         self.matrix_b = generate_random_matrix(self.size)
+        self.matrix_c = strassen(self.matrix_a, self.matrix_b)
         # matrix = [[1 for x in range(self.size)] for y in range(self.size)]
         while True:
             screen.blit(background, [0, 0])
             # pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(500, 0, 40, 30))
             draw_matrix_grid(self.size, 'A', self.matrix_a)
             draw_matrix_grid(self.size, 'B', self.matrix_b)
-            draw_matrix_grid(self.size, 'C')
+            draw_matrix_grid(self.size, 'C', self.matrix_c)
             # draw_matrix_b(size)
 
             for event in pygame.event.get():
