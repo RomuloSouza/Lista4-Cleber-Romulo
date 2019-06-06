@@ -1,8 +1,5 @@
 import pygame, sys
 from pygame.locals import *
-from collections import deque
-from collections import defaultdict
-from os.path import abspath, dirname
 from random import randint
 from strassen import strassen
 
@@ -23,10 +20,9 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 BLOCK_SIZE = 30
 MATRIX_SPACE = 30
 background = pygame.image.load('images/space.jpg')
+plus_image = pygame.image.load('images/plus.png')
+minus_image = pygame.image.load('images/minus.png')
 
-def printMatrix(matrix):
-    for line in matrix:
-        print ("\t".join(map(str,line)))
 
 def draw_matrix_number(number, pos_x, pos_y):
     text = pygame.font.Font('freesansbold.ttf', 13)
@@ -57,28 +53,34 @@ def draw_matrix_grid(size, matrix_id, matrix=None):
                 draw_matrix_number(matrix[x][y], pos_x, pos_y)
 
 def generate_random_matrix(size):
-    matrix = [[randint(0, 10) for x in range(size)] for y in range(size)]
+    matrix = [[randint(0, 20) for x in range(size)] for y in range(size)]
     return matrix
+
 
 class Game:
     def __init__(self):
         self.size = 10
+        self.size_number_size = 40
         self.matrix_a = None
         self.matrix_b = None
         self.matrix_c = None
+        self.plus_size = plus_image.get_width()
+        self.plus_x = 30
+        self.plus_y = (screen_height/2) - self.plus_size - self.size_number_size
+        self.minus_size = minus_image.get_width()
+        self.minus_x = self.plus_x
+        self.minus_y = self.plus_y + self.plus_size + self.size_number_size
 
     def run(self):
-        self.matrix_a = generate_random_matrix(self.size)
-        self.matrix_b = generate_random_matrix(self.size)
-        self.matrix_c = strassen(self.matrix_a, self.matrix_b)
-        # matrix = [[1 for x in range(self.size)] for y in range(self.size)]
+        self.create_new_matrices()
         while True:
             screen.blit(background, [0, 0])
-            # pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(500, 0, 40, 30))
+            screen.blit(plus_image, (self.plus_x, self.plus_y))
+            screen.blit(minus_image, (self.minus_x, self.minus_y))
             draw_matrix_grid(self.size, 'A', self.matrix_a)
             draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C', self.matrix_c)
-            # draw_matrix_b(size)
+            self.draw_size_number()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -87,6 +89,15 @@ class Game:
                     print('keydown')
                 elif event.type == KEYDOWN and event.key == 115: # key s
                     print('keydown')
+                elif event.type == KEYDOWN and event.key == 273: # key up
+                    if self.size < 10:
+                        self.size += 1
+                        self.create_new_matrices()
+                elif event.type == KEYDOWN and event.key == 274: # key down
+                    if self.size > 1:
+                        self.size -= 1
+                        self.create_new_matrices()
+
 
             key = pygame.key.get_pressed()
             self.keyboard_manager(key)
@@ -97,6 +108,18 @@ class Game:
         # print(self.pos_x, self.pos_y)
         if key[pygame.K_ESCAPE]:
             sys.exit()
+    
+    def draw_size_number(self):
+        text = pygame.font.Font('freesansbold.ttf', 30)
+        text_surface = text.render(str(self.size), True, white)
+        text_surface_rect = text_surface.get_rect()
+        text_surface_rect.center = (self.plus_x + self.plus_size/2, self.plus_y + self.plus_size + self.size_number_size/2)
+        screen.blit(text_surface, text_surface_rect)
+
+    def create_new_matrices(self):
+        self.matrix_a = generate_random_matrix(self.size)
+        self.matrix_b = generate_random_matrix(self.size)
+        self.matrix_c = strassen(self.matrix_a, self.matrix_b)
             
 
 if __name__ == '__main__':
