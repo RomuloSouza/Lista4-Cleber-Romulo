@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.mouse.set_visible(0)
 BLOCK_SIZE = 25
-MATRIX_SIZE = 12
+MATRIX_SIZE = 3
 MATRIX_SPACE = 30
 MATRIX_FONT_SIZE = 12
 COUNTER_FONT_SIZE = 30
@@ -51,7 +51,7 @@ def draw_matrix_grid(size, matrix_id, matrix=None):
             rect = pygame.Rect(pos_x, pos_y , BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(screen, (255, 0, 0), rect)
             if matrix is not None:
-                draw_matrix_number(matrix[x][y], pos_x, pos_y)
+                draw_matrix_number(matrix[y][x], pos_x, pos_y)
 
 
 def generate_random_matrix(size):
@@ -66,19 +66,19 @@ class Game:
         self.matrix_a = None
         self.matrix_b = None
         self.matrix_c = None
-        self.plus_size = key_up_image.get_width()
-        self.plus_x = 30
-        self.plus_y = (screen_height/2) - self.plus_size - self.size_number_size/2 + MATRIX_SPACE/2
-        self.minus_size = key_down_image.get_width()
-        self.minus_x = self.plus_x
-        self.minus_y = self.plus_y + self.plus_size + self.size_number_size
+        self.key_up_size = key_up_image.get_width()
+        self.key_up_x = 30
+        self.key_up_y = (screen_height/2) - self.key_up_size - self.size_number_size/2 + MATRIX_SPACE/2
+        self.key_down_size = key_down_image.get_width()
+        self.key_down_x = self.key_up_x
+        self.key_down_y = self.key_up_y + self.key_up_size + self.size_number_size
 
     def run(self):
         self.create_new_matrices()
         while True:
             screen.blit(background, [0, 0])
-            screen.blit(key_up_image, (self.plus_x, self.plus_y))
-            screen.blit(key_down_image, (self.minus_x, self.minus_y))
+            screen.blit(key_up_image, (self.key_up_x, self.key_up_y))
+            screen.blit(key_down_image, (self.key_down_x, self.key_down_y))
             draw_matrix_grid(self.size, 'A', self.matrix_a)
             draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C', self.matrix_c)
@@ -115,8 +115,8 @@ class Game:
         text_surface = text.render(str(self.size), True, white)
         text_surface_rect = text_surface.get_rect()
         text_surface_rect.center = (
-            self.plus_x + self.plus_size/2,
-            self.plus_y + self.plus_size + self.size_number_size/2
+            self.key_up_x + self.key_up_size/2,
+            self.key_up_y + self.key_up_size + self.size_number_size/2
         )
         screen.blit(text_surface, text_surface_rect)
 

@@ -1,5 +1,9 @@
 from math import ceil, log
 
+def printMatrix(matrix):
+    for line in matrix:
+        print ("\t".join(map(str,line)))
+
 def ikjMatrixProduct(A, B):
     n = len(A)
     C = [[0 for i in range(n)] for j in range(n)]
@@ -110,6 +114,13 @@ def strassenR(A, B):
         return C
 
 def strassen(A, B):
+    print('####### NEW STRASSEN #######')
+    print('MATRIX A:')
+    printMatrix(A)
+    print('#########')
+    print('MATRIX B:')
+    printMatrix(B)
+    print('#########')
     assert type(A) == list and type(B) == list
     assert len(A) == len(A[0]) == len(B) == len(B[0])
 
@@ -130,4 +141,6 @@ def strassen(A, B):
     for i in range(n):
         for j in range(n):
             C[i][j] = CPrep[i][j]
+
+    printMatrix(C)
     return C
