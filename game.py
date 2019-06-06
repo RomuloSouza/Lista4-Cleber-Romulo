@@ -14,15 +14,15 @@ screen_width = 1277
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-# pygame.mouse.set_visible(0)
+pygame.mouse.set_visible(0)
 BLOCK_SIZE = 25
 MATRIX_SIZE = 12
 MATRIX_SPACE = 30
-MATRIX_FONT_SIZE = 10
+MATRIX_FONT_SIZE = 12
 COUNTER_FONT_SIZE = 30
 background = pygame.image.load('images/space.jpg')
-plus_image = pygame.image.load('images/plus.png')
-minus_image = pygame.image.load('images/minus.png')
+key_up_image = pygame.image.load('images/key_up2.png')
+key_down_image = pygame.image.load('images/key_down2.png')
 
 
 def draw_matrix_number(number, pos_x, pos_y):
@@ -66,10 +66,10 @@ class Game:
         self.matrix_a = None
         self.matrix_b = None
         self.matrix_c = None
-        self.plus_size = plus_image.get_width()
+        self.plus_size = key_up_image.get_width()
         self.plus_x = 30
         self.plus_y = (screen_height/2) - self.plus_size - self.size_number_size/2 + MATRIX_SPACE/2
-        self.minus_size = minus_image.get_width()
+        self.minus_size = key_down_image.get_width()
         self.minus_x = self.plus_x
         self.minus_y = self.plus_y + self.plus_size + self.size_number_size
 
@@ -77,8 +77,8 @@ class Game:
         self.create_new_matrices()
         while True:
             screen.blit(background, [0, 0])
-            screen.blit(plus_image, (self.plus_x, self.plus_y))
-            screen.blit(minus_image, (self.minus_x, self.minus_y))
+            screen.blit(key_up_image, (self.plus_x, self.plus_y))
+            screen.blit(key_down_image, (self.minus_x, self.minus_y))
             draw_matrix_grid(self.size, 'A', self.matrix_a)
             draw_matrix_grid(self.size, 'B', self.matrix_b)
             draw_matrix_grid(self.size, 'C', self.matrix_c)
